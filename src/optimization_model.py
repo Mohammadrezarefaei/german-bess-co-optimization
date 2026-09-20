@@ -23,7 +23,7 @@ def solve_bess_co_optimization(df_market, config):
     
     SOC_min = config['SOC_min_pct'] * E_max
     SOC_max = config['SOC_max_pct'] * E_max
-    SOC_init = config['SOC_init_pct'] * E_max
+    SOC_init = config['SOC_init_pct'] * E_max  # تعریف صحیح با حروف کوچک
 
     # Decision Variables
     p_ch = pulp.LpVariable.dicts("P_ch", T, lowBound=0, upBound=P_max, cat=pulp.LpContinuous)
@@ -76,7 +76,9 @@ def solve_bess_co_optimization(df_market, config):
         model += soc[t] - (r_pos_block[b] * afrr_dur_buffer) >= SOC_min
         model += soc[t] + (r_neg_block[b] * afrr_dur_buffer) <= SOC_max
 
-   model += soc[23] >= SOC_init, "Final_SOC_Neutrality"
+    # استفاده از SOC_init (با حروف کوچک صحیح)
+    model += soc[23] >= SOC_init, "Final_SOC_Neutrality"
+
     # Solve
     solver = pulp.PULP_CBC_CMD(msg=False)
     status = model.solve(solver)
