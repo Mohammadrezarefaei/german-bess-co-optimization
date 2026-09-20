@@ -20,6 +20,15 @@ Experience the optimization engine in real-time. Adjust BESS hardware parameters
 
 ---
 
+## 📈 Visual Analytics & Dispatch Profile
+The optimization model generates precise, hour-by-hour operational schedules. The chart below illustrates the exact dispatch strategy, price overlays, and State of Charge (SOC) management.
+
+<div align="center">
+  <img src="newplot.png" alt="BESS Optimization Dispatch and SOC Plot" width="850"/>
+</div>
+
+---
+
 ## 📊 Key Performance Indicators (KPIs)
 The mathematical model evaluates both financial viability and technical battery health. Based on standard utility-scale testing parameters (10 MW / 20 MWh), the framework achieved the following daily performance targets:
 
@@ -53,19 +62,12 @@ The core optimization engine is built using **Google OR-Tools** (incorporating t
 
 ---
 
-## 📈 Visual Analytics
-The interactive dashboard uses **Plotly** to provide a deep dive into the operational profile of the BESS:
-1.  **Price Overlay:** Compares Day-Ahead Spot volatility with aFRR capacity prices to justify the solver's market allocation.
-2.  **Dispatch Schedule:** Bar charts detailing exact MW allocations for charging, discharging, and reserving capacity per hour.
-3.  **SOC Trajectory:** A continuous line graph tracking the State of Charge throughout the 24-hour cycle, proving constraint adherence.
-
----
-
 ## 📁 Repository Structure
 ```text
 .
 ├── app.py                      # Main Streamlit application
 ├── requirements.txt            # Python dependencies
+├── newplot.png                 # Optimization visual dispatch profile
 ├── src/
 │   ├── __init__.py
 │   └── optimization_model.py   # Core MILP OR-Tools mathematical formulation
