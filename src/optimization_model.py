@@ -9,7 +9,6 @@ def solve_bess_co_optimization(df_market, config):
     Solves the utility-scale BESS day-ahead and aFRR co-optimization problem 
     using Google OR-Tools (MILP Solver).
     """
-    # ایجاد حل‌کننده CBC
     solver = pywraplp.Solver.CreateSolver('CBC')
     if not solver:
         raise Exception("Could not create OR-Tools solver.")
@@ -29,7 +28,7 @@ def solve_bess_co_optimization(df_market, config):
     SOC_max = config['SOC_max_pct'] * E_max
     SOC_init = config['SOC_init_pct'] * E_max
 
-    # --- متغیرهای تصمیم (Decision Variables) ---
+    # Decision Variables
     p_ch = {}
     p_dis = {}
     u_ch = {}
@@ -49,31 +48,31 @@ def solve_bess_co_optimization(df_market, config):
         r_pos_block[b] = solver.NumVar(0.0, P_max, f"R_pos_block_{b}")
         r_neg_block[b] = solver.NumVar(0.0, P_max, f"R_neg_block_{b}")
 
-    # --- محدودیت‌ها (Constraints) ---
+    # Constraints
     for t in T:
         b = t // 4
         
-        # ۱. جلوگیری از شارژ و دشارژ هم‌زمان
+        # Exclusive charging/discharging in Spot
         solver.Add(p_ch[t] <= P_max * u_ch[t])
         solver.Add(p_dis[t] <= P_max * u_dis[t])
         solver.Add(u_ch[t] + u_dis[t] <= 1)
 
-        # ۲. محدودیت اشتراک توان اینورتر
+        # Inverter capacity sharing
         solver.Add(p_dis[t] + r_pos_block[b] <= P_max)
         solver.Add(p_ch[t] + r_neg_block[b] <= P_max)
 
-        # ۳. پویایی SOC
+        # SOC dynamics
         prev_soc = SOC_init if t == 0 else soc[t - 1]
         solver.Add(soc[t] == prev_soc + (p_ch[t] * eta_ch - (p_dis[t] / eta_dis)))
 
-        # ۴. بافر انرژی aFRR
+        # aFRR Energy Backing Buffers
         solver.Add(soc[t] - (r_pos_block[b] * afrr_dur_buffer) >= SOC_min)
         solver.Add(soc[t] + (r_neg_block[b] * afrr_dur_buffer) <= SOC_max)
 
-    # قید تعادل انتهای روز
+    # Final SOC Neutrality Constraint
     solver.Add(soc[23] >= SOC_init)
 
-    # --- تابع هدف (Objective Function) ---
+    # Objective Function
     spot_rev = solver.Sum([
         (df_market.loc[t, 'Spot_DA_EUR_MWh'] * p_dis[t] - df_market.loc[t, 'Spot_DA_EUR_MWh'] * p_ch[t])
         for t in T
@@ -92,7 +91,7 @@ def solve_bess_co_optimization(df_market, config):
 
     solver.Maximize(spot_rev + afrr_rev - total_deg_cost)
 
-    # حل مدل
+    # Solve
     status_code = solver.Solve()
     
     if status_code == pywraplp.Solver.OPTIMAL:
