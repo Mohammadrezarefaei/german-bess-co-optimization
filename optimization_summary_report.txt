@@ -1,0 +1,12 @@
+
+==================================================
+UTILITY-SCALE BESS CO-OPTIMIZATION REPORT (GERMANY)
+==================================================
+Optimization Status: Success
+Net Daily Profit: 13,638.67 EUR
+--------------------------------------------------
+- Spot Arbitrage Revenue: 510.21 EUR
+- aFRR Positive Capacity Revenue: 7,237.60 EUR
+- aFRR Negative Capacity Revenue: 5,925.45 EUR
+- Total Degradation Cost: -34.59 EUR
+==================================================
