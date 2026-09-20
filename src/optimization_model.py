@@ -76,7 +76,7 @@ def solve_bess_co_optimization(df_market, config):
         model += soc[t] - (r_pos_block[b] * afrr_dur_buffer) >= SOC_min
         model += soc[t] + (r_neg_block[b] * afrr_dur_buffer) <= SOC_max
 
-    model += soc[23] >= SOC_INIT, "Final_SOC_Neutrality"
+   model += soc[23] >= SOC_init, "Final_SOC_Neutrality"
 
     # Solve
     solver = pulp.PULP_CBC_CMD(msg=False)
