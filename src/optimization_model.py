@@ -76,7 +76,7 @@ def solve_bess_co_optimization(df_market, config):
         model += soc[t] - (r_pos_block[b] * afrr_dur_buffer) >= SOC_min
         model += soc[t] + (r_neg_block[b] * afrr_dur_buffer) <= SOC_max
 
-    # استفاده از SOC_init (با حروف کوچک صحیح)
+    # قید تعادل و خنثی بودن SOC در پایان روز (با استفاده از SOC_init صحیح)
     model += soc[23] >= SOC_init, "Final_SOC_Neutrality"
 
     # Solve
